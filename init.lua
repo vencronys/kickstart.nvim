@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -164,6 +164,8 @@ vim.opt.colorcolumn = '80'
 -- See `:help 'confirm'`
 vim.opt.confirm = true
 
+vim.opt.guicursor = ''
+
 vim.g.vimtex_view_method = 'zathura'
 vim.g.vimtex_view_forward_search_on_start = false
 vim.g.vimtex_compiler_latexmk = {
@@ -229,10 +231,19 @@ vim.keymap.set({ 'n', 'v' }, '<leader>d', '"_d')
 -- This is going to get me cancelled
 vim.keymap.set('i', '<C-c>', '<Esc>')
 
-vim.keymap.set('n', '<C-f>', "<cmd>silent !tmux neww zsh -i -c 'tmux-sessionizer'<CR>", { desc = 'Run tmux-sessionizer script' })
+vim.keymap.set('n', '<A-f>', "<cmd>silent !tmux neww zsh -i -c 'tmux-sessionizer'<CR>", { desc = 'Run tmux-sessionizer script' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
+-- vim.api.nvim_create_autocmd('FileType', {
+--   pattern = { 'cpp', 'c' },
+--   callback = function()
+--     vim.bo.shiftwidth = 2 -- Number of spaces to use for indentation
+--     vim.bo.tabstop = 2 -- Number of spaces a tab represents
+--     vim.bo.softtabstop = 2 -- Number of spaces a tab counts for while editing
+--     vim.bo.expandtab = true -- Convert tabs to spaces
+--   end,
+-- })
 
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
@@ -933,8 +944,15 @@ require('lazy').setup({
     config = function()
       ---@diagnostic disable-next-line: missing-fields
       require('oldworld').setup {
-        styles = {
-          comments = { italic = false }, -- Disable italics in comments
+        integrations = {
+          navic = true,
+          alpha = false,
+          rainbow_delimiters = false,
+        },
+        highlight_overrides = {
+          Normal = { bg = 'NONE' },
+          NormalNC = { bg = 'NONE' },
+          CursorLine = { bg = '#222128' },
         },
       }
 
@@ -1002,6 +1020,11 @@ require('lazy').setup({
       statusline.section_location = function()
         return '%2l:%-2v'
       end
+      -- Apply custom highlight for the filename section (white text)
+      vim.cmd 'highlight MiniStatuslineFilename guifg=#BCB1C0 gui=none' -- White text for filename
+      vim.cmd 'highlight MiniStatuslineFileinfo guifg=#BCB1C0 gui=none' -- White text for file info
+      -- Apply custom highlight for the inactive filename section (light gray text)
+      vim.cmd 'highlight MiniStatuslineInactive guifg=#BCB1C0 gui=none' -- Light gray text for inactive filenames
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
